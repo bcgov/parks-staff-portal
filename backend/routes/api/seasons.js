@@ -34,7 +34,7 @@ function getNewStatusForSeason(season, user) {
 }
 
 router.get(
-  "/seasons/:seasonId",
+  "/:seasonId",
   asyncHandler(async (req, res) => {
     const { seasonId } = req.params;
 
@@ -204,7 +204,7 @@ router.get(
 
 // save draft (role determined by user)
 router.post(
-  "/seasons/:seasonId/save/",
+  "/:seasonId/save/",
   asyncHandler(async (req, res) => {
     const { seasonId } = req.params;
     const { notes, dates, readyToPublish } = req.body;
@@ -302,7 +302,7 @@ router.post(
 
 // approve
 router.post(
-  "/seasons/:seasonId/approve/",
+  "/:seasonId/approve/",
   asyncHandler(async (req, res) => {
     const { seasonId } = req.params;
     const { notes, readyToPublish } = req.body;
