@@ -18,7 +18,6 @@ export default (sequelize) => {
       strapiId: DataTypes.INTEGER, // `id` in strapi
       number: DataTypes.INTEGER, // `sectionNumber` in strapi
       name: DataTypes.STRING, // `sectionName` in strapi
-      strapiUpdated: DataTypes.DATE, // `updatedAt` in strapi
     },
     {
       sequelize,

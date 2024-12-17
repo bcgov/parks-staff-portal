@@ -11,9 +11,13 @@ import SeasonModel from "./season.js";
 import DateRangeModel from "./daterange.js";
 import SeasonChangeLogModel from "./seasonchangelog.js";
 import DateChangeLogModel from "./datechangelog.js";
+import SectionModel from "./section.js";
+import ManagementAreaModel from "./managementArea.js";
 
 const Dateable = DateableModel(sequelize);
 
+const Section = SectionModel(sequelize);
+const ManagementArea = ManagementAreaModel(sequelize);
 const Park = ParkModel(sequelize);
 
 const User = UserModel(sequelize);
@@ -40,6 +44,8 @@ const models = {
   DateRange,
   SeasonChangeLog,
   DateChangeLog,
+  Section,
+  ManagementArea,
 };
 
 Object.values(models).forEach((model) => {
@@ -60,4 +66,6 @@ export {
   DateRange,
   SeasonChangeLog, // not needed
   DateChangeLog, // not needed
+  Section,
+  ManagementArea,
 };
