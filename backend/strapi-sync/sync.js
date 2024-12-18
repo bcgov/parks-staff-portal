@@ -97,7 +97,7 @@ export async function fetchAllModels() {
     {
       endpoint: "/protected-areas",
       model: "protected-area",
-      fields: ["parkFacilities", "parkOperations"],
+      fields: ["parkFacilities", "parkOperations", "managementAreas"],
       items: [],
     },
     {
@@ -152,17 +152,36 @@ export async function createOrUpdatePark(item) {
   // get park on our DB by strapi ID
   let dbItem = await getItemByAttributes(Park, { strapiId: item.id });
 
+  // Get Strapi IDs of this park's management areas
+  const mgmtAreaStrapiIds = item.attributes.managementAreas.data.map(
+    (mgmtArea) => mgmtArea.id,
+  );
+
+  console.log("Mgmt Area Strapi IDs", mgmtAreaStrapiIds);
+
   if (dbItem) {
+    console.log("db item exists", dbItem);
+
     dbItem.name = item.attributes.protectedAreaName;
+    dbItem.managementAreaStrapiIds = mgmtAreaStrapiIds;
+
+    console.log("updating", dbItem);
+
+    const res = await dbItem.save();
+
+    console.log("saved", res);
   } else {
     const dateable = await createModel(Dateable);
+
     const data = {
       name: item.attributes.protectedAreaName,
       orcs: item.attributes.orcs,
       dateableId: dateable.id,
       strapiId: item.id,
+      managementAreaStrapiIds: mgmtAreaStrapiIds,
     };
 
+    console.log("creating", data);
     dbItem = await createModel(Park, data);
   }
 

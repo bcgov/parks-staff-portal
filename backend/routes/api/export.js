@@ -14,6 +14,8 @@ import {
   Dateable,
   SeasonChangeLog,
   User,
+  Section,
+  ManagementArea,
 } from "../../models/index.js";
 
 const router = Router();
@@ -72,6 +74,18 @@ router.get(
       featuresWhere.hasReservations = true;
     }
 
+    const mgmtAreasData = ManagementArea.findAll({
+      attributes: ["id", "strapiId", "name"],
+
+      include: [
+        {
+          model: Section,
+          as: "section",
+          attributes: ["id", "strapiId", "name"],
+        },
+      ],
+    });
+
     const featuresData = await Feature.findAll({
       where: featuresWhere,
       attributes: ["id", "name", "hasReservations", "strapiId"],
@@ -79,7 +93,7 @@ router.get(
         {
           model: Park,
           as: "park",
-          attributes: ["id", "name", "orcs"],
+          attributes: ["id", "name", "orcs", "managementAreaStrapiIds"],
         },
         {
           model: FeatureType,
@@ -147,11 +161,24 @@ router.get(
       ],
     });
 
+    // Create a map of management areas by strapi ID
+    const mgmtAreaMap = new Map();
+
+    (await mgmtAreasData).forEach((mgmtArea) => {
+      mgmtAreaMap.set(mgmtArea.strapiId, mgmtArea);
+    });
+
     // Flatten data for CSV row format
-    const flattened = featuresData.flatMap((feature) =>
-      feature.dateable.dateRanges.map((dateRange) => ({
-        Section: "@TODO: map Park to section values from Strapi",
-        "Management Area": "@TODO: map Park to Mgmt Area values from Strapi",
+    const flattened = featuresData.flatMap((feature) => {
+      const mgmtAreas = feature.park.managementAreaStrapiIds.map((strapiId) =>
+        mgmtAreaMap.get(strapiId),
+      );
+
+      return feature.dateable.dateRanges.map((dateRange) => ({
+        Section: mgmtAreas.map((mgmtArea) => mgmtArea.section.name).join(", "),
+        "Management Area": mgmtAreas
+          .map((mgmtArea) => mgmtArea.name)
+          .join(", "),
         ORCS: feature.park.orcs,
         "Park Name": feature.park.name,
         "Sub-Area": feature.name,
@@ -163,8 +190,8 @@ router.get(
         Status: dateRange.season.status,
         "Ready to publish": dateRange.season.readyToPublish,
         Notes: dateRange.season.changeLogs.map(formatChangeLog).join("\n"),
-      })),
-    );
+      }));
+    });
 
     // Sort results
     const sorted = _.sortBy(flattened, [

@@ -32,7 +32,7 @@ export default (sequelize) => {
       orcs: DataTypes.STRING,
       dateableId: DataTypes.INTEGER,
       strapiId: DataTypes.INTEGER,
-      managementAreaIds: DataTypes.JSONB,
+      managementAreaStrapiIds: DataTypes.JSONB,
     },
     {
       sequelize,

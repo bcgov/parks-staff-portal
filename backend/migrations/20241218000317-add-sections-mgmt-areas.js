@@ -85,8 +85,8 @@ module.exports = {
       },
     });
 
-    // Add managementAreaIds to Parks table
-    await queryInterface.addColumn("Parks", "managementAreaIds", {
+    // Add management area IDs to Parks table
+    await queryInterface.addColumn("Parks", "managementAreaStrapiIds", {
       type: Sequelize.JSONB,
       allowNull: true,
     });
@@ -94,7 +94,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     // Revert changes in the down function
-    await queryInterface.removeColumn("Parks", "managementAreaIds");
+    await queryInterface.removeColumn("Parks", "managementAreaStrapiIds");
     await queryInterface.dropTable("ManagementAreas");
     await queryInterface.dropTable("Sections");
   },
