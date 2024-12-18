@@ -16,6 +16,8 @@ import {
   DateRange,
   SeasonChangeLog,
   DateChangeLog,
+  Section,
+  ManagementArea,
 } from "../models/index.js";
 
 import { connectionConfig } from "../db/connection.js";
@@ -52,6 +54,8 @@ const adminOptions = {
     DateRange,
     SeasonChangeLog,
     DateChangeLog,
+    Section,
+    ManagementArea,
   ],
 };
 
