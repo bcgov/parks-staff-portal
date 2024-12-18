@@ -85,21 +85,16 @@ module.exports = {
       },
     });
 
-    // Add managementAreaId to Parks table
-    await queryInterface.addColumn("Parks", "managementAreaId", {
-      type: Sequelize.INTEGER,
+    // Add managementAreaIds to Parks table
+    await queryInterface.addColumn("Parks", "managementAreaIds", {
+      type: Sequelize.JSONB,
       allowNull: true,
-      references: {
-        model: "ManagementAreas",
-        key: "id",
-      },
-      onDelete: "SET NULL",
     });
   },
 
   async down(queryInterface, Sequelize) {
     // Revert changes in the down function
-    await queryInterface.removeColumn("Parks", "managementAreaId");
+    await queryInterface.removeColumn("Parks", "managementAreaIds");
     await queryInterface.dropTable("ManagementAreas");
     await queryInterface.dropTable("Sections");
   },

@@ -24,10 +24,6 @@ export default (sequelize) => {
         foreignKey: "parkId",
         as: "seasons",
       });
-      Park.belongsTo(models.ManagementArea, {
-        foreignKey: "managementAreaId",
-        as: "managementArea",
-      });
     }
   }
   Park.init(
@@ -36,7 +32,7 @@ export default (sequelize) => {
       orcs: DataTypes.STRING,
       dateableId: DataTypes.INTEGER,
       strapiId: DataTypes.INTEGER,
-      managementAreaId: DataTypes.INTEGER,
+      managementAreaIds: DataTypes.JSONB,
     },
     {
       sequelize,

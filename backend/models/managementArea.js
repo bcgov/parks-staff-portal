@@ -8,11 +8,6 @@ export default (sequelize) => {
         foreignKey: "sectionId",
         as: "section",
       });
-
-      ManagementArea.hasMany(models.Park, {
-        foreignKey: "managementAreaId",
-        as: "parks",
-      });
     }
   }
 

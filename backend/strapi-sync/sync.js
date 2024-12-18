@@ -13,7 +13,10 @@ import {
   DateType,
   Season,
   DateRange,
+  Section,
+  ManagementArea,
 } from "../models/index.js";
+import _ from "lodash";
 
 /**
  * Gets data for specific page number
@@ -465,5 +468,57 @@ export async function oneTimeDataImport() {
   await createDatesAndSeasons(datesData);
 }
 
-// syncData();
-// oneTimeDataImport();
+export async function syncSectionsAndManagementAreas() {
+  // only meant to run once - not needed for regular sync
+  const url = "https://cms.bcparks.ca/api";
+  const mgmtAreasUrl = `${url}/management-areas`;
+
+  const sectionFields = ["id", "sectionNumber", "sectionName"];
+
+  const params = new URLSearchParams();
+
+  for (const field of sectionFields) {
+    params.append(`populate[section][fields]`, field);
+  }
+
+  const strapiData = await getData(mgmtAreasUrl, params);
+
+  // Build a (unique) list of sections
+  let sections = strapiData.map(({ section }) => ({
+    strapiId: section.id,
+    number: section.sectionNumber,
+    name: section.sectionName,
+  }));
+
+  sections = _.uniqBy(sections, "strapiId");
+  console.log("test", sections);
+
+  // Empty the Sections table before adding fresh data
+  await Section.destroy({
+    where: {},
+  });
+
+  console.log("Importing %d sections...", sections.length);
+
+  const sectionsRows = await Section.bulkCreate(sections);
+
+  // map Section strapiId to Section id in our db
+  const sectionIds = sectionsRows.map((row) => [row.strapiId, row.id]);
+  const sectionMap = new Map(sectionIds);
+
+  console.log("Imported.");
+
+  console.log("Importing %d management areas...", strapiData.length);
+
+  // Build a list of management areas to insert
+  const mgmtAreas = strapiData.map((mgmtArea) => ({
+    strapiId: mgmtArea.id,
+    number: mgmtArea.managementAreaNumber,
+    name: mgmtArea.managementAreaName,
+    sectionId: sectionMap.get(mgmtArea.section.id),
+  }));
+
+  const mgmtAreaRows = await ManagementArea.bulkCreate(mgmtAreas);
+
+  console.log("Imported.");
+}
