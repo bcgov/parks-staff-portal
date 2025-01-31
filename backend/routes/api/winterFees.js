@@ -234,4 +234,13 @@ router.get(
   }),
 );
 
+router.post(
+  "/:seasonId/save/",
+  asyncHandler(async (req, res) => {
+    console.log("save endpoint hit");
+
+    res.sendStatus(200);
+  }),
+);
+
 export default router;
