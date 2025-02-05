@@ -141,7 +141,7 @@ function SubmitDates() {
   }
 
   async function submitChanges(savingDraft = false) {
-    if (["pending review", "approved", "published"].includes(season.status)) {
+    if (["pending review", "approved", "on API"].includes(season.status)) {
       const confirm = await openConfirmation(
         "Move back to draft?",
         "The dates will be moved back to draft and need to be submitted again to be reviewed.",
@@ -741,7 +741,7 @@ function SubmitDates() {
         <div className="col-lg-6">
           <h2 className="mb-4">
             Notes
-            {["approved", "published"].includes(season?.status) && (
+            {["approved", "on API"].includes(season?.status) && (
               <span className="text-danger">*</span>
             )}
           </h2>
@@ -805,7 +805,7 @@ function SubmitDates() {
               type="button"
               className="btn btn-primary"
               onClick={continueToPreview}
-              disabled={!hasChanges()}
+              // disabled={!hasChanges()}
             >
               Continue to preview
             </button>

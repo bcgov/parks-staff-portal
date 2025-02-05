@@ -1,3 +1,4 @@
+import "../env.js";
 import { get } from "./axios.js";
 import {
   getItemByAttributes,
@@ -77,6 +78,7 @@ export async function getData(url, queryParams) {
  * @returns {Array} list of all models with thier name, endpoint, and items
  */
 export async function fetchAllModels() {
+  // const url = `${process.env.STRAPI_URL}/api`;
   const url = "https://cms.bcparks.ca/api";
 
   const strapiData = [
@@ -419,8 +421,10 @@ export async function createDatesAndSeasons(datesData) {
 
     if (!season) {
       // create season if a season matching those 3 attributes doesn't exist
+      const status = operatingYear <= 2024 ? "on API" : "requested";
+
       const data = {
-        status: "requested",
+        status,
         readyToPublish: true,
         ...attrs,
       };
@@ -467,10 +471,6 @@ export async function createDatesAndSeasons(datesData) {
   for (const [key, seasonDates] of winterSeasonMap) {
     const [parkId, operatingYear] = key.split("-");
 
-    console.log("key: ", key);
-    console.log("operatingYear: ", operatingYear);
-    console.log("");
-
     const featureTypeId = featureTypeMap["Winter fee"].id;
 
     // Try to get the season by parkId, winterFeatureType.id, and operatingYear
@@ -482,9 +482,11 @@ export async function createDatesAndSeasons(datesData) {
     let season = await getItemByAttributes(Season, attrs);
 
     if (!season) {
+      const status = operatingYear <= 2024 ? "on API" : "requested";
+
       // create season if a season matching those 3 attributes doesn't exist
       const data = {
-        status: "requested",
+        status,
         readyToPublish: true,
         ...attrs,
       };
@@ -598,6 +600,7 @@ async function createTestUser() {
  */
 export async function oneTimeDataImport() {
   // only meant to run once - not needed for regular sync
+  // const url = `${process.env.STRAPI_URL}/api`;
   const url = "https://cms.bcparks.ca/api";
 
   const datesData = {
